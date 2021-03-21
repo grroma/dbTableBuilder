@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using dbTableBuilder.Interfaces;
 using Xceed.Document.NET;
 using Xceed.Words.NET;
@@ -11,22 +12,34 @@ namespace dbTableBuilder.FileCreator
     {
         public void Create(List<Table> tables)
         {
-            string fileName = @"C:\Users\oilhe\Desktop\Проекты\dbTableBuilder\dbTableBuilder\DocXExample.docx";
+            string fileName = @"C:\Users\oilhe\Desktop\Проекты\dbTableBuilder\DocXExample.docx";
 
             try
             {
                 var doc = DocX.Create(fileName);
                 foreach (var table in tables)
                 {
-                    var t = doc.AddTable( table.Row.Count, 2 );
+                    doc.InsertParagraph();
+                    doc.InsertParagraph($"{table.Name}");
+                    var t = doc.AddTable( table.Row.Count+1, 3 );
                     t.Design = TableDesign.TableGrid;
-                    for (var i = 0; i < 1; i++)
+                    t.Rows[0].Cells[0].Paragraphs[0].Append("Атрибут");
+                    t.Rows[0].Cells[1].Paragraphs[0].Append("Тип данных");
+                    t.Rows[0].Cells[2].Paragraphs[0].Append("Описание");
+                    
+                    var row = 1 ;
+                    while (row < table.Row.Count)
                     {
-                        t.Rows[0].Cells[0].Paragraphs[i].Append(table.Row.Keys.ToString());
-                        t.Rows[0].Cells[1].Paragraphs[i].Append(table.Row.Values.ToString());
+                        foreach (var (key, value) in table.Row)
+                        {
+                            t.Rows[row].Cells[0].Paragraphs[0].Append(key);
+                            t.Rows[row].Cells[1].Paragraphs[0].Append(value);
+                            t.Rows[row].Cells[2].Paragraphs[0].Append(string.Empty);
+                            row++;
+                        }
                     }
                     doc.InsertTable(t);
-                    doc.InsertParagraph();
+                    
                 }
                 doc.Save();
             }
