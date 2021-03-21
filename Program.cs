@@ -1,19 +1,20 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using dbTableBuilder.Interfaces;
 
 namespace dbTableBuilder
 {
     internal static class Program
     {
-        static void Main(string[] args)
+        // Debug
+        private const string ConnectionString = "Host=localhost;Port=5432;Database=mems;User Id=grroma;Password=Q12345q";
+        private const string FilePath= @"C:\Users\oilhe\Desktop\Проекты\dbTableBuilder\DocXExample.docx";
+        private static void Main(string[] args)
         {
-            const string database = "Host=localhost;Port=5432;Database=mems;User Id=grroma;Password=Q12345q";
-            var extractor = new DbExtractor.DbExtractor();
-            var tables = extractor.Extract(database);
-            Console.WriteLine(tables.Count());
+            IDbExtractor extractor = new DbExtractor.DbExtractor();
+            var tables = extractor.Extract(args[0]); // input: ConnectionString
             
-            var writer = new FileCreator.FileCreator();
-            writer.Create(tables.ToList());
+            IFileCreator writer = new FileCreator.FileCreator();
+            writer.Create(tables.ToList(), args[1]);  // input: FilePath
         }
     }
 }

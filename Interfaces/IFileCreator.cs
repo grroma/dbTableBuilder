@@ -5,6 +5,6 @@ namespace dbTableBuilder.Interfaces
 {
     public interface IFileCreator
     {
-        void Create(List<Table> tables);
+        void Create(IEnumerable<Table> tables, string filePath);
     }
 }

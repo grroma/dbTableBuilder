@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using dbTableBuilder.Interfaces;
 using Xceed.Document.NET;
 using Xceed.Words.NET;
@@ -10,12 +9,11 @@ namespace dbTableBuilder.FileCreator
 {
     public class FileCreator : IFileCreator
     {
-        public void Create(List<Table> tables)
+        public void Create(IEnumerable<Table> tables, string filePath)
         {
-            string fileName = @"C:\Users\oilhe\Desktop\Проекты\dbTableBuilder\DocXExample.docx";
             try
             {
-                var doc = DocX.Create(fileName);
+                var doc = DocX.Create(filePath);
                 foreach (var table in tables)
                 {
                     doc.InsertParagraph();
