@@ -13,7 +13,6 @@ namespace dbTableBuilder.FileCreator
         public void Create(List<Table> tables)
         {
             string fileName = @"C:\Users\oilhe\Desktop\Проекты\dbTableBuilder\DocXExample.docx";
-
             try
             {
                 var doc = DocX.Create(fileName);
@@ -21,25 +20,24 @@ namespace dbTableBuilder.FileCreator
                 {
                     doc.InsertParagraph();
                     doc.InsertParagraph($"{table.Name}");
-                    var t = doc.AddTable( table.Row.Count+1, 3 );
+                    var t = doc.AddTable( table.Rows.Count+1, 3 );
                     t.Design = TableDesign.TableGrid;
                     t.Rows[0].Cells[0].Paragraphs[0].Append("Атрибут");
                     t.Rows[0].Cells[1].Paragraphs[0].Append("Тип данных");
-                    t.Rows[0].Cells[2].Paragraphs[0].Append("Описание");
+                    t.Rows[0].Cells[2].Paragraphs[0].Append("NULLABLE");
                     
-                    var row = 1 ;
-                    while (row < table.Row.Count)
+                    var rowIndex = 1 ;
+                    while (rowIndex < table.Rows.Count)
                     {
-                        foreach (var (key, value) in table.Row)
+                        foreach (var row in table.Rows)
                         {
-                            t.Rows[row].Cells[0].Paragraphs[0].Append(key);
-                            t.Rows[row].Cells[1].Paragraphs[0].Append(value);
-                            t.Rows[row].Cells[2].Paragraphs[0].Append(string.Empty);
-                            row++;
+                            t.Rows[rowIndex].Cells[0].Paragraphs[0].Append(row.Name);
+                            t.Rows[rowIndex].Cells[1].Paragraphs[0].Append(row.DataType);
+                            t.Rows[rowIndex].Cells[2].Paragraphs[0].Append(row.IsNullable);
+                            rowIndex++;
                         }
                     }
                     doc.InsertTable(t);
-                    
                 }
                 doc.Save();
             }

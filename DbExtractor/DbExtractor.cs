@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using dbTableBuilder.Interfaces;
+using dbTableBuilder.Models;
 using Npgsql;
 using Table = dbTableBuilder.Models.Table;
 
@@ -59,8 +60,8 @@ namespace dbTableBuilder.DbExtractor
         {
             foreach (var table in tables)
             {
-                table.Row = new Dictionary<string, string>();
-                var sqlGetColumnName = @$"select column_name, data_type
+                table.Rows = new List<Row>();
+                var sqlGetColumnName = @$"select column_name, data_type, is_nullable
                 from information_schema.columns
                 where table_name = '{table.Name}';";
                 
@@ -68,9 +69,12 @@ namespace dbTableBuilder.DbExtractor
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    var name = reader.GetValue(0).ToString();
-                    var type = reader.GetValue(1).ToString();
-                    table.Row.Add(name, type);
+                    table.Rows.Add(new Row
+                    {
+                        Name = reader.GetValue(0).ToString(),
+                        DataType = reader.GetValue(1).ToString(),
+                        IsNullable = reader.GetValue(2).ToString()
+                    });
                 }
                 reader.Close();
             }
