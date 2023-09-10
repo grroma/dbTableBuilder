@@ -5,17 +5,12 @@ using System.Linq;
 using dbTableBuilder.Interfaces;
 using dbTableBuilder.Models;
 using Npgsql;
-using Table = dbTableBuilder.Models.Table;
 
-namespace dbTableBuilder.DbExtractor
+namespace dbTableBuilder.Services
 {
-    public class DbExtractor : IDbExtractor
+    internal class DbExtractor : IDbExtractor
     {
-        private const string SqlGetTablesName = 
-            @"select table_name 
-            from information_schema.tables 
-            where table_schema = 'public';";
-
+        /// <inheritdoc/>
         public IEnumerable<Table> Extract(string connectionString)
         {
             var connection = Connect(connectionString);
@@ -25,7 +20,7 @@ namespace dbTableBuilder.DbExtractor
             return result;
         }
         
-        private NpgsqlConnection Connect(string connectionString)
+        private static NpgsqlConnection Connect(string connectionString)
         {
             var connection = new NpgsqlConnection(connectionString);
             try
@@ -40,9 +35,11 @@ namespace dbTableBuilder.DbExtractor
             return connection;
         }
         
-        private ArrayList ExtractTables(NpgsqlConnection connection)
+        private static ArrayList ExtractTables(NpgsqlConnection connection)
         {
-            var getTableCommand = new NpgsqlCommand(SqlGetTablesName, connection);
+            const string sqlGetTablesName = "select table_name from information_schema.tables where table_schema = 'public';";
+
+            var getTableCommand = new NpgsqlCommand(sqlGetTablesName, connection);
             var reader = getTableCommand.ExecuteReader();
             var nameTables = new ArrayList();
             while (reader.Read())
@@ -56,7 +53,7 @@ namespace dbTableBuilder.DbExtractor
             return nameTables;
         }
         
-        private List<Table> ExtractColumns(List<Table> tables, NpgsqlConnection connection)
+        private static List<Table> ExtractColumns(List<Table> tables, NpgsqlConnection connection)
         {
             foreach (var table in tables)
             {

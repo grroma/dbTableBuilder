@@ -5,9 +5,9 @@ using Xceed.Document.NET;
 using Xceed.Words.NET;
 using Table = dbTableBuilder.Models.Table;
 
-namespace dbTableBuilder.FileCreator
+namespace dbTableBuilder.Services
 {
-    public class FileCreator : IFileCreator
+    internal class FileCreator : IFileCreator
     {
         public void Create(IEnumerable<Table> tables, string filePath)
         {
@@ -18,7 +18,7 @@ namespace dbTableBuilder.FileCreator
                 {
                     doc.InsertParagraph();
                     doc.InsertParagraph($"{table.Name}");
-                    var t = doc.AddTable( table.Rows.Count+1, 3 );
+                    var t = doc.AddTable( table.Rows.Count + 1, 3 );
                     t.Design = TableDesign.TableGrid;
                     t.Rows[0].Cells[0].Paragraphs[0].Append("Атрибут");
                     t.Rows[0].Cells[1].Paragraphs[0].Append("Тип данных");
